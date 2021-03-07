@@ -21,6 +21,11 @@ const BooksService = {
     return db('books')
       .where({ id })
       .update(updatedBook);
+  },
+  deleteBook(db, id) {
+    return db('books')
+      .delete()
+      .where({ id });
   }
 };
 

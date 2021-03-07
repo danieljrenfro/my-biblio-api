@@ -135,8 +135,16 @@ booksRouter
     }
   })
   .delete(async (req, res, next) => {
-    // implement
-    res.send();
+    try {
+      await BooksService.deleteBook(
+        req.app.get('db'),
+        req.params.book_id
+      );
+
+      res.status(204).end();
+    } catch(error) {
+      next(error);
+    }
   });
 
 booksRouter

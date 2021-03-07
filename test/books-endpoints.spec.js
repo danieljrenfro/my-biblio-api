@@ -270,4 +270,26 @@ describe.only('Books Endpoints', function() {
         });
     });
   });
+
+  describe('DELETE /api/books/:book_id', () => {
+    beforeEach('seed tables', () => helpers.seedTables(
+      db,
+      testUsers,
+      testBooks,
+      testBorrows,
+    ));
+
+    it(`responds with 204 and removes the book from the database`, () => {
+      return supertest(app)
+        .delete('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .get('/api/books/1')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .expect(404, { error: `Book doesn't exist` });
+        });
+    });
+  });
 });
