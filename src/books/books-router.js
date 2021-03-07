@@ -78,16 +78,61 @@ booksRouter
   
 booksRouter
   .route('/:book_id')
-  .use(async (req, res, next) => {
+  .all(async (req, res, next) => {
+    const { book_id } = req.params;
     
+    try {
+      const book = await BooksService.findBookById(
+        req.app.get('db'),
+        book_id
+      );
+      
+      if (!book)
+        return res.status(404).json({ error: `Book doesn't exist` });
+      
+      if (book.user_id !== req.user.id)
+        return res.status(401).json({ error: `Book doesn't belong to you` });
+  
+      req.book = book;
+      next();
+    } catch(error) {
+      next(error);
+    }
   })
-  .get(async (req, res, next) => {
-    // implement
-    res.send();
+  .get(async (req, res) => {
+    res.json(req.book);
   })
   .patch(jsonBodyParser, async (req, res, next) => {
-    // implement
-    res.send();
+    try {
+      const { title, authors, genre, format, status, borrowed } = req.body;
+      const bookToUpdate = {title, authors, genre, format, status, borrowed };
+  
+      const numberOfValues = Object.values(bookToUpdate).filter(Boolean).length;
+      if (!numberOfValues) 
+        return res.status(400).json({ error: `Request body must contain one of 'title', 'authors', 'genre', 'format', 'status', 'borrowed'` });
+      
+      // Validates 'format' update value
+      const validFormats = ['Hardback', 'Paperback', 'E-Book', 'Audio'];
+
+      if (format && !validFormats.includes(format))
+        return res.status(400).json({ error: `Format must be updated with value of 'Hardback', 'Paperback', 'E-Book' or 'Audio'` });
+      
+      // Validates 'status' updated value
+      const validStatus = ['Read', 'Unread', 'Reading'];
+
+      if (status && !validStatus.includes(status))
+        return res.status(400).json({ error: `Status must be updated with value of 'Read', 'Unread' or 'Reading'` });
+
+      await BooksService.updateBook(
+        req.app.get('db'),
+        req.params.book_id,
+        bookToUpdate
+      );
+
+      res.status(204).end();
+    } catch(error) {
+      next(error);
+    }
   })
   .delete(async (req, res, next) => {
     // implement

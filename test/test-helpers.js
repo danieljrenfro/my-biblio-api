@@ -106,25 +106,36 @@ function makeMyBiblioFixtures() {
 }
 
 function cleanTables(db) {
-  return db.transaction(trx =>
-    trx.raw(
+  return db
+    .raw(
       `TRUNCATE
-        "borrows",
-        "books",
-        "users"`
-    )
-      .then(() =>
-        Promise.all([
-          trx.raw(`ALTER SEQUENCE borrows_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`ALTER SEQUENCE books_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-          trx.raw(`SELECT setval('borrows_id_seq', 0)`),
-          trx.raw(`SELECT setval('books_id_seq', 0)`),
-          trx.raw(`SELECT setval('users_id_seq', 0)`),
-        ])
-      )
-  );
+        users,
+        books,
+        borrows
+        RESTART IDENTITY`
+    );
 }
+
+// function cleanTables(db) {
+//   return db.transaction(trx =>
+//     trx.raw(
+//       `TRUNCATE
+//         "borrows",
+//         "books",
+//         "users"`
+//     )
+//       .then(() =>
+//         Promise.all([
+//           trx.raw(`ALTER SEQUENCE borrows_id_seq minvalue 0 START WITH 1`),
+//           trx.raw(`ALTER SEQUENCE books_id_seq minvalue 0 START WITH 1`),
+//           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
+//           trx.raw(`SELECT setval('borrows_id_seq', 0)`),
+//           trx.raw(`SELECT setval('books_id_seq', 0)`),
+//           trx.raw(`SELECT setval('users_id_seq', 0)`),
+//         ])
+//       )
+//   );
+// }
 
 function seedUsers(db, users) {
   const preppedUsers = users.map(user => ({
@@ -136,18 +147,16 @@ function seedUsers(db, users) {
     .into('users');
 }
 
-function seedTables(db, users, books, borrows) {
-  seedUsers(db, users)
-    .then(() => {
-      return db
-        .insert(books)
-        .into('books');
-    })
-    .then(() => {
-      return db
-        .insert(borrows)
-        .into('borrows');
-    });
+async function seedTables(db, users, books, borrows) {
+  await seedUsers(db, users);
+  
+  await db
+    .insert(books)
+    .into('books');
+    
+  await db
+    .insert(borrows)
+    .into('borrows');
 }
 
 function makeAuthHeader(user, secret = process.env.JWT_SECRET) {

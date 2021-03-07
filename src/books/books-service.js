@@ -11,11 +11,16 @@ const BooksService = {
       .returning('*')
       .then(([row]) => row);
   },
-  findBookById(db, id, user_id) {
+  findBookById(db, id) {
     return db('books')
       .select('*')
       .where({ id })
       .first();
+  },
+  updateBook(db, id, updatedBook) {
+    return db('books')
+      .where({ id })
+      .update(updatedBook);
   }
 };
 

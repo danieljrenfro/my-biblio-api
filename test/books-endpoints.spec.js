@@ -154,7 +154,19 @@ describe.only('Books Endpoints', function() {
       ));
 
       it(`responds 401 and 'Book doesn't belong to you`, () => {
+        return supertest(app)
+          .get('/api/books/4')
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .expect(401, { error: `Book doesn't belong to you` });
+      });
 
+      it(`responds 200 and returns the desired book`, () => {
+        const desiredBook = testBooks[0];
+
+        return supertest(app)
+          .get(`/api/books/${desiredBook.id}`)
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .expect(200, desiredBook);
       });
     });
 
@@ -162,8 +174,100 @@ describe.only('Books Endpoints', function() {
       beforeEach('seed users', () => helpers.seedUsers(db, testUsers));
 
       it(`responds 404 and 'Book doesn't exist'`, () => {
-        
+        return supertest(app)
+          .get('/api/books/1')
+          .set('Authorization', helpers.makeAuthHeader(testUser))
+          .expect(404, { error: `Book doesn't exist` });
       });
+    });
+  });
+
+  describe('PATCH /api/books/:book_id', () => {
+    beforeEach('seed tables', () => helpers.seedTables(
+      db, 
+      testUsers,
+      testBooks,
+      testBorrows
+    ));
+
+    it(`responds 400 when no required field is present`, () => {
+      return supertest(app)
+        .patch('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send({ irrelevantField: 'foo' })
+        .expect(400, { error: `Request body must contain one of 'title', 'authors', 'genre', 'format', 'status', 'borrowed'` });
+    });
+
+    it(`responds 400 when format update value is invalid`, () => {
+      const updateBody = { format: 'Digital' };
+
+      return supertest(app)
+        .patch('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(400, { error: `Format must be updated with value of 'Hardback', 'Paperback', 'E-Book' or 'Audio'` });
+    });
+
+    it(`responds 400 when status update value is invalid`, () => {
+      const updateBody = { status: 'In the middle of reading' };
+
+      return supertest(app)
+        .patch('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(400, { error: `Status must be updated with value of 'Read', 'Unread' or 'Reading'` });
+    });
+
+    it(`responds 204 when successfully updated`, () => {
+      const updateBody = {
+        title: 'Updated Title',
+        authors: 'Updated Authors',
+        genre: 'Updated Genre',
+        format: 'Audio',
+        status: 'Reading',
+        borrowed: true
+      };
+
+      const expectedBook = {
+        id: testBooks[0].id,
+        user_id: testBooks[0].user_id,
+        ...updateBody,
+      };
+
+      return supertest(app)
+        .patch('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .get('/api/books/1')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .expect(expectedBook);
+        });
+    });
+
+    it(`responds 204 and updates subset of fields`, () => {
+      const updateBody = {
+        title: 'Updated Title'
+      };
+
+      const expectedBook = {
+        ...testBooks[0],
+        ...updateBody
+      };
+
+      return supertest(app)
+        .patch('/api/books/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .get('/api/books/1')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .expect(expectedBook);
+        });
     });
   });
 });
