@@ -30,7 +30,7 @@ function cleanTables(db) {
   return db.raw(
     `TRUNCATE
       users
-    `
+      RESTART IDENTITY CASCADE`
   );
 }
 
