@@ -32,6 +32,56 @@ describe('Protected Endpoints', function () {
       name: 'PUT /api/auth/token',
       path: '/api/auth/token',
       method: supertest(app).put,
+    },
+    {
+      name: 'GET /api/borrows',
+      path: '/api/borrows',
+      method: supertest(app).get
+    },
+    {
+      name: 'POST /api/borrows',
+      path: '/api/borrows',
+      method: supertest(app).post
+    },
+    {
+      name: 'GET /api/borrows/:borrow_id',
+      path: '/api/borrows/:borrow_id',
+      method: supertest(app).get
+    },
+    {
+      name: 'PATCH /api/borrows/:borrow_id',
+      path: '/api/borrows/:borrow_id',
+      method: supertest(app).patch
+    },
+    {
+      name: 'GET /api/books',
+      path: '/api/books',
+      method: supertest(app).get
+    },
+    {
+      name: 'POST /api/books',
+      path: '/api/books',
+      method: supertest(app).post
+    },
+    {
+      name: 'GET /api/books/:book_id',
+      path: '/api/books/:book_id',
+      method: supertest(app).get
+    },
+    {
+      name: 'PATCH /api/books/:book_id',
+      path: '/api/books/:book_id',
+      method: supertest(app).patch
+    },
+    {
+      name: 'DELETE /api/books/:book_id',
+      path: '/api/books/:book_id',
+      method: supertest(app).delete
+    },
+    {
+      name: 'GET /api/books/:book_id/borrows',
+      path: '/api/books/:book_id',
+      method: supertest(app).get
     }
   ];
 
