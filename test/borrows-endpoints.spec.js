@@ -125,4 +125,44 @@ describe.only('Borrows Endpoints', function() {
         });
     });
   });
+
+  describe('GET /borrows/:borrow_id', () => {
+    beforeEach('seed tables', () => helpers.seedTables(
+      db,
+      testUsers,
+      testBooks,
+      testBorrows
+    ));
+
+    it(`responds 404 and 'Borrow doesn't exist'`, () => {
+      return supertest(app)
+        .get('/api/borrows/10')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(404, { error: `Borrow doesn't exist` });
+    });
+
+    it(`responds 401 and 'Borrow doesn't belong to you'`, () => {
+      return supertest(app)
+        .get('/api/borrows/1')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(401, { error: `Borrow doesn't belong to you` });
+    });
+
+    it(`responds 200 and returns the correct borrow`, () => {
+      const expectedBorrow = testBorrows[1];
+      
+      return supertest(app)
+        .get('/api/borrows/2')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(200)
+        .then(res => {
+          expect(res.body.id).to.eql(expectedBorrow.id);
+          expect(res.body).to.have.property('date');
+          expect(res.body.name).to.eql(expectedBorrow.name);
+          expect(res.body.returned).to.eql(expectedBorrow.returned);
+          expect(res.body.user_id).to.eql(expectedBorrow.user_id);
+          expect(res.body.book_id).to.eql(expectedBorrow.book_id);
+        });
+    });
+  });
 });

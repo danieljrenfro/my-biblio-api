@@ -58,8 +58,27 @@ borrowsRouter
 
 borrowsRouter
   .route('/:borrow_id')
-  .get(async (req, res, next) => {
-    res.send();
+  .all(async (req, res, next) => {
+    try {
+      const borrow = await BorrowsService.findBorrowById(
+        req.app.get('db'),
+        req.params.borrow_id
+      );
+
+      if (!borrow)
+        return res.status(404).json({ error: `Borrow doesn't exist` });
+
+      if (borrow.user_id !== req.user.id)
+        return res.status(401).json({ error: `Borrow doesn't belong to you` });
+      
+      req.borrow = borrow;
+      next();
+    } catch(error) {
+      next(error);
+    }
+  })
+  .get(async (req, res) => {
+    res.json(req.borrow);
   })
   .patch(async (req, res, next) => {
     res.send();

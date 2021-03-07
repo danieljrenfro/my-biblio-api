@@ -11,6 +11,12 @@ const BorrowsService = {
       .into('borrows')
       .returning('*')
       .then(([row]) => row);
+  },
+  findBorrowById(db, id) {
+    return db('borrows')
+      .select('*')
+      .where({ id })
+      .first();
   }
 };
 
