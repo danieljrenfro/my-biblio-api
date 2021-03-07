@@ -4,7 +4,7 @@ const app = require('../src/app');
 
 const helpers = require('./test-helpers');
 
-describe.only('Books Endpoints', function() {
+describe('Books Endpoints', function() {
   const {
     testUsers,
     testBooks,
@@ -289,6 +289,52 @@ describe.only('Books Endpoints', function() {
             .get('/api/books/1')
             .set('Authorization', helpers.makeAuthHeader(testUser))
             .expect(404, { error: `Book doesn't exist` });
+        });
+    });
+  });
+
+  describe('GET /api/books/:book_id/borrows', () => {
+    beforeEach('seed tables', () => helpers.seedTables(
+      db, 
+      testUsers,
+      testBooks,
+      testBorrows
+    ));
+
+    it(`responds 404 and 'Book doesn't exist'`, () => {
+      return supertest(app)
+        .get('/api/books/100/borrows')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(404, { error: `Book doesn't exist` });
+    });
+
+    it(`responds 401 and 'Book doesn't belong to you'`, () => {
+      return supertest(app)
+        .get('/api/books/4/borrows')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(401, { error: `Book doesn't belong to you` });
+    });
+
+    it(`responds 200 and an empty array when no active borrows`, () => {
+      return supertest(app)
+        .get('/api/books/3/borrows')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(200, []);
+    });
+
+    it(`responds 200 and active borrow for book`, () => {
+      const expectedBorrow = {
+        ...testBorrows[1]
+      };
+      return supertest(app)
+        .get('/api/books/1/borrows')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .expect(200)
+        .then(res => {
+          expect(res.body[0].book_id).to.eql(expectedBorrow.book_id);
+          expect(res.body[0].id).to.eql(expectedBorrow.id);
+          expect(res.body[0].name).to.eql(expectedBorrow.name);
+          expect(res.body[0].returned).to.eql(expectedBorrow.returned);
         });
     });
   });

@@ -26,6 +26,12 @@ const BooksService = {
     return db('books')
       .delete()
       .where({ id });
+  },
+  getBookBorrows(db, book_id) {
+    return db('borrows')
+      .select('*')
+      .where({ book_id })
+      .andWhere('returned', false);
   }
 };
 

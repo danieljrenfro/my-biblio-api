@@ -94,6 +94,12 @@ function makeBorrowsArray() {
       name: 'Evan Cook',
       returned: false,
       book_id: 1
+    },
+    {
+      id: 3,
+      name: 'Daniel Renfro',
+      returned: true,
+      book_id: 1
     }
   ];
 }
@@ -115,27 +121,6 @@ function cleanTables(db) {
         RESTART IDENTITY`
     );
 }
-
-// function cleanTables(db) {
-//   return db.transaction(trx =>
-//     trx.raw(
-//       `TRUNCATE
-//         "borrows",
-//         "books",
-//         "users"`
-//     )
-//       .then(() =>
-//         Promise.all([
-//           trx.raw(`ALTER SEQUENCE borrows_id_seq minvalue 0 START WITH 1`),
-//           trx.raw(`ALTER SEQUENCE books_id_seq minvalue 0 START WITH 1`),
-//           trx.raw(`ALTER SEQUENCE users_id_seq minvalue 0 START WITH 1`),
-//           trx.raw(`SELECT setval('borrows_id_seq', 0)`),
-//           trx.raw(`SELECT setval('books_id_seq', 0)`),
-//           trx.raw(`SELECT setval('users_id_seq', 0)`),
-//         ])
-//       )
-//   );
-// }
 
 function seedUsers(db, users) {
   const preppedUsers = users.map(user => ({

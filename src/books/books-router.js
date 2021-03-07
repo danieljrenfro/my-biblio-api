@@ -149,9 +149,32 @@ booksRouter
 
 booksRouter
   .route('/:book_id/borrows')
+  .all(async (req, res, next) => {
+    try {
+      const book = await BooksService.findBookById(
+        req.app.get('db'),
+        req.params.book_id
+      );
+
+      if (!book)
+        return res.status(404).json({ error: `Book doesn't exist` });
+
+      if (book.user_id !== req.user.id) 
+        return res.status(401).json({ error: `Book doesn't belong to you` });
+      
+      req.book = book;
+      next();
+    } catch(error) {
+      next(error);
+    }
+  })
   .get(async (req, res, next) => {
-    // implement
-    res.send();
+    const bookBorrows = await BooksService.getBookBorrows(
+      req.app.get('db'),
+      req.book.id
+    );
+
+    res.json(bookBorrows);
   });
 
 
