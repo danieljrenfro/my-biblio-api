@@ -87,19 +87,22 @@ function makeBorrowsArray() {
       id: 1,
       name: 'Daniel Renfro',
       returned: false,
-      book_id: 4
+      book_id: 4,
+      user_id: 2
     },
     {
       id: 2,
       name: 'Evan Cook',
       returned: false,
-      book_id: 1
+      book_id: 1,
+      user_id: 1
     },
     {
       id: 3,
       name: 'Daniel Renfro',
       returned: true,
-      book_id: 1
+      book_id: 1,
+      user_id: 1
     }
   ];
 }
