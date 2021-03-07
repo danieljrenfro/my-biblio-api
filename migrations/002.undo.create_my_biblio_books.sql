@@ -1,0 +1,9 @@
+BEGIN;
+
+DROP TABLE IF EXISTS books;
+
+DROP TYPE IF EXISTS format;
+
+DROP TYPE IF EXISTS status;
+
+COMMIT;
