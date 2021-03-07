@@ -80,8 +80,25 @@ borrowsRouter
   .get(async (req, res) => {
     res.json(req.borrow);
   })
-  .patch(async (req, res, next) => {
-    res.send();
+  .patch(jsonBodyParser, async (req, res, next) => {
+    try {
+      const { name, returned } = req.body;
+      const borrowToUpdate = { name, returned };
+
+      const numberOfValues = Object.values(borrowToUpdate).filter(Boolean).length;
+      if (!numberOfValues)
+        return res.status(400).json({ error: `Request body must contain either 'name' or 'returned'` });
+
+      await BorrowsService.updateBorrow(
+        req.app.get('db'),
+        req.params.borrow_id,
+        borrowToUpdate
+      );
+
+      res.status(204).end();
+    } catch(error) {
+      next(error);
+    }    
   });
 
 module.exports = borrowsRouter;

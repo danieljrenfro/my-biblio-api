@@ -17,6 +17,11 @@ const BorrowsService = {
       .select('*')
       .where({ id })
       .first();
+  },
+  updateBorrow(db, id, updatedBorrow) {
+    return db('borrows')
+      .update(updatedBorrow)
+      .where({ id });
   }
 };
 

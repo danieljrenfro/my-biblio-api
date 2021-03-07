@@ -165,4 +165,63 @@ describe.only('Borrows Endpoints', function() {
         });
     });
   });
+
+  describe('PATCH /borrows/:borrow_id', () => {
+    beforeEach('seed tables', () => helpers.seedTables(
+      db,
+      testUsers,
+      testBooks,
+      testBorrows
+    ));
+
+    it(`responds 400 if no required field is in the request body`, () => {
+      return supertest(app)
+        .patch('/api/borrows/2')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send({ irrelevantField: 'foo' })
+        .expect(400, { error: `Request body must contain either 'name' or 'returned'` });
+    });
+
+    it(`responds 204 and updates all fields`, () => {
+      const updateBody = {
+        name: 'Updated Name',
+        returned: true
+      };
+
+      return supertest(app)
+        .patch('/api/borrows/2')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .get('/api/borrows/2')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .then(res => {
+              expect(res.body.name).to.eql(updateBody.name);
+              expect(res.body.returned).to.eql(updateBody.returned);
+            });
+        });
+    });
+
+    it(`responds 204 and updates a subset of fields`, () => {
+      const updateBody = {
+        name: 'Updated Name'
+      };
+
+      return supertest(app)
+        .patch('/api/borrows/2')
+        .set('Authorization', helpers.makeAuthHeader(testUser))
+        .send(updateBody)
+        .expect(204)
+        .then(() => {
+          return supertest(app)
+            .get('/api/borrows/2')
+            .set('Authorization', helpers.makeAuthHeader(testUser))
+            .then(res => {
+              expect(res.body.name).to.eql(updateBody.name);
+            });
+        });
+    });
+  });
 });
