@@ -50,36 +50,3 @@ This server-side app was created with:
 ➖➖➖*/borrows/:borrow_id*
 (GET) - get a borrow by an id
 (PATCH) - update a borrow by an id
-
-
-## Available Scripts  
-  
-In the project directory, you can run:  
-  
-`npm start`  
-  
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-`npm run cypress:open` -> run in a seperate terminal
-
-Launches the test runner in an interactive watch mode. You must have the server running on the client app using `npm start` prior to testing.
-
-`npm run dev`
-
-Runs the app through a development server.
-
-`npm run migrate`
-
-Migrate tables in local database
-
-`npm run migrate:test`
-
-Migrate tables in local test database
-
-`heroku create` to create remote server (will need heroku account - see this link for info https://devcenter.heroku.com/categories/command-line)    
-`npm run deploy`  to:
-  
-- Run NPM audit  
-- Migrate tables in production server
-- Push latest commit to Heroku main branch of created app
