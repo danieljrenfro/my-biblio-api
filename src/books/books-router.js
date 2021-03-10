@@ -168,6 +168,7 @@ booksRouter
       next(error);
     }
   })
+  // eslint-disable-next-line no-unused-vars
   .get(async (req, res, next) => {
     const bookBorrows = await BooksService.getBookBorrows(
       req.app.get('db'),

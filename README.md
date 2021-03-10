@@ -1,26 +1,83 @@
-# Express Boilerplate!
+# myBiblio API
 
-This is a boilerplate project used for starting new projects!
+[Live App](https://mybiblio.vercel.app/)
 
-## Set up
+[Client-side repo](https://github.com/danieljrenfro/my-biblio-client)
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+---
+### Catalog your library and keep track of books you've borrowed out to friends!
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+myBiblio is an app created for the purpose of cataloging your personal library and keeping track of books that you have lent to friends! User may add books to their library, edit books, delete books, see all of their library in one spot as well as see all borrowed books in one spot. 
 
-## Scripts
+---
+### Tech stack
+This server-side app was created with:    
+<img align="left" alt="Visual Studio Code" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/visual-studio-code/visual-studio-code.png" />
+<img align="left" alt="JavaScript" src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
+<img align="left" alt="NodeJS" src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" />
+<img align="left" alt="ExpressJS" src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" />
+<img align="left" alt="Heroku" src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=white" />
+<img align="left" alt="Git" width="26px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/git/git.png" />
+<img align="left" alt="GitHub" width="26px" src="https://raw.githubusercontent.com/github/explore/78df643247d429f6cc873026c0622819ad797942/topics/github/github.png" />  
 
-Start the application `npm start`
+<br/>
 
-Start nodemon for the application `npm run dev`
+---
 
-Run the tests `npm test`
+### Endpoints
+➖**Routes**    
+➖**BASE URL: /api**   
 
-## Deploying
+➖➖➖*/user*
+(POST) - create a user on the server and in the database.
+➖➖➖*/auth/token*    
+(POST) - send login credentials to server for auth token.
+(PATCH) - refresh auth token
+➖➖➖*/books*
+(GET) - get all books belonging to a user
+(POST) - create a new book
+➖➖➖*/books/:book_id*
+(GET) - get a book by id
+(PATCH) - update a book by id
+(DELETE) - delete a book by id
+➖➖➖*/books/:book_id/borrows*
+(GET) - get all active borrows that belong to an individual book
+➖➖➖*/borrows*
+(GET) - get all active borrows for the user
+(POST) - create a borrow for the user and a given book
+➖➖➖*/borrows/:borrow_id*
+(GET) - get a borrow by an id
+(PATCH) - update a borrow by an id
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's main branch.
+
+## Available Scripts  
+  
+In the project directory, you can run:  
+  
+`npm start`  
+  
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
+
+`npm run cypress:open` -> run in a seperate terminal
+
+Launches the test runner in an interactive watch mode. You must have the server running on the client app using `npm start` prior to testing.
+
+`npm run dev`
+
+Runs the app through a development server.
+
+`npm run migrate`
+
+Migrate tables in local database
+
+`npm run migrate:test`
+
+Migrate tables in local test database
+
+`heroku create` to create remote server (will need heroku account - see this link for info https://devcenter.heroku.com/categories/command-line)    
+`npm run deploy`  to:
+  
+- Run NPM audit  
+- Migrate tables in production server
+- Push latest commit to Heroku main branch of created app
